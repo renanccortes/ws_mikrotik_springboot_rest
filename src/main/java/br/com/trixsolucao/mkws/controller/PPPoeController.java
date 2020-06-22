@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static br.com.trixsolucao.mkws.controller.util.ControllerUtil.validaHeaderConnection;
 
@@ -35,7 +36,20 @@ public class PPPoeController {
             Mikrotik.getInstance().onConectar(connectionHeader.get("hostmk"), connectionHeader.get("portmk"), connectionHeader.get("usuariomk"), connectionHeader.get("senhamk"));
 
             List<Map<String, String>> pppUsersMap = Mikrotik.getInstance().onEnviarComando("/ppp/secret/print");
-            return ResponseEntity.ok().body(MapToObject.mapToObject(pppUsersMap, PPPUsers.class));
+            var pppUsers = MapToObject.mapToObject(pppUsersMap, PPPUsers.class);
+
+            List<Map<String, String>> pppActivesMap = Mikrotik.getInstance().onEnviarComando("/ppp/active/print");
+            var pppActiveUsers = MapToObject.mapToObject(pppActivesMap, PPPActiveUser.class);
+
+            //Definindo online/offline conforme a lista de ativos buscada anteriormente
+             pppUsers.stream().peek(u->
+                      u.setOnline( pppActiveUsers.contains(new PPPActiveUser(u.getUser())) )
+
+             ).collect(Collectors.toList());
+
+
+
+            return ResponseEntity.ok().body(pppUsers);
 
         }catch(HeaderException ex) {
             return ResponseEntity.badRequest().body(ex.getMessage());

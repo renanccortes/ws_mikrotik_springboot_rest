@@ -64,6 +64,8 @@ public class PPPUsers   {
     @MkMapping(from = "comment")
     private String comment;
 
+    private boolean online;
+
     private ConnectionBean connectionBean;
 
 
@@ -168,6 +170,14 @@ public class PPPUsers   {
 
     public void setLastLogout(Boolean lastLogout) {
         this.lastLogout = lastLogout;
+    }
+
+    public boolean isOnline() {
+        return online;
+    }
+
+    public void setOnline(boolean online) {
+        this.online = online;
     }
 
     public String getNewUser() {

@@ -26,6 +26,8 @@ package br.com.trixsolucao.mkws.model;
 
 import br.com.trixsolucao.mkws.model.mapping.MkMapping;
 
+import java.util.Objects;
+
 /**
  * @author Renan
  */
@@ -55,6 +57,10 @@ public class PPPActiveUser {
      */
     public PPPActiveUser() {
         // do nothing
+    }
+
+    public PPPActiveUser(String user) {
+        this.user = user;
     }
 
     /**
@@ -181,5 +187,18 @@ public class PPPActiveUser {
      */
     public void setRadius(boolean radius) {
         this.radius = radius;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PPPActiveUser that = (PPPActiveUser) o;
+        return Objects.equals(user, that.user);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(user);
     }
 }
