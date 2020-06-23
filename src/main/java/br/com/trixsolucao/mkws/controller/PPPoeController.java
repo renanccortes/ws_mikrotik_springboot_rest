@@ -12,10 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static br.com.trixsolucao.mkws.controller.util.ControllerUtil.validaHeaderConnection;
@@ -42,14 +39,13 @@ public class PPPoeController {
             var pppActiveUsers = MapToObject.mapToObject(pppActivesMap, PPPActiveUser.class);
 
             //Definindo online/offline conforme a lista de ativos buscada anteriormente
-             pppUsers.stream().peek(u->
-                      u.setOnline( pppActiveUsers.contains(new PPPActiveUser(u.getUser())) )
+            // incluido sorted ordenando por nome de usuário
+            List<PPPUsers> pppSorted = pppUsers.stream().peek(u ->
+                    u.setOnline(pppActiveUsers.contains(new PPPActiveUser(u.getUser())))
+            ).sorted(Comparator.comparing(PPPUsers::getUser)).collect(Collectors.toList());
 
-             ).collect(Collectors.toList());
 
-
-
-            return ResponseEntity.ok().body(pppUsers);
+            return ResponseEntity.ok().body(pppSorted);
 
         }catch(HeaderException ex) {
             return ResponseEntity.badRequest().body(ex.getMessage());
@@ -68,7 +64,8 @@ public class PPPoeController {
             Optional<Object> optionalID = Optional.ofNullable(id);
 
             if (optionalID.isPresent()) {
-                Mikrotik.getInstance().onEnviarComando("/ppp/secret/set " + valores);
+                Mikrotik.getInstance().onEnviarComando("/ppp/secret/remove .id=" + optionalID.get());
+                Mikrotik.getInstance().onEnviarComando("/ppp/secret/add " + valores);
                 return ResponseEntity.ok().body("PPPoe editado com sucesso");
             } else {
                 return ResponseEntity.badRequest().body("Id não encontrado!");
