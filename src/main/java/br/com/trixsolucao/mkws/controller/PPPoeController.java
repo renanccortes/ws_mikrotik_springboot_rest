@@ -58,12 +58,12 @@ public class PPPoeController {
         try {
 
             Mikrotik.getInstance().onConectar(connectionHeader.get("hostmk"), connectionHeader.get("portmk"), connectionHeader.get("usuariomk"), connectionHeader.get("senhamk"));
+            pppoeUser.setId(null);
             String valores = MapToObject.getStringFromObject(pppoeUser);
             Optional<Object> optionalID = Optional.ofNullable(id);
 
             if (optionalID.isPresent()) {
-                Mikrotik.getInstance().onEnviarComando("/ppp/secret/remove .id=" + optionalID.get());
-                Mikrotik.getInstance().onEnviarComando("/ppp/secret/add " + valores);
+                Mikrotik.getInstance().onEnviarComando("/ppp/secret/set numbers=" + optionalID.get() + valores);
                 return ResponseEntity.ok().body("PPPoe editado com sucesso");
             } else {
                 return ResponseEntity.badRequest().body("Id não encontrado!");
@@ -197,15 +197,16 @@ public class PPPoeController {
     }
 
     @PutMapping(value = "/plans/{id}")
-    public ResponseEntity editarPlanos(@PathVariable("id") String id, @RequestHeader Map<String, String> connectionHeader, @RequestBody PPPUsers pppoeUser) {
+    public ResponseEntity editarPlanos(@PathVariable("id") String id, @RequestHeader Map<String, String> connectionHeader, @RequestBody PPPProfiles pppoeProfile) {
         try {
 
             Mikrotik.getInstance().onConectar(connectionHeader.get("hostmk"), connectionHeader.get("portmk"), connectionHeader.get("usuariomk"), connectionHeader.get("senhamk"));
-            String valores = MapToObject.getStringFromObject(pppoeUser);
+            pppoeProfile.setId(null);
+            String valores = MapToObject.getStringFromObject(pppoeProfile);
             Optional<Object> optionalID = Optional.ofNullable(id);
 
             if (optionalID.isPresent()) {
-                Mikrotik.getInstance().onEnviarComando("/ppp/profile/set " + valores);
+                Mikrotik.getInstance().onEnviarComando("/ppp/profile/set numbers=" + optionalID.get() + valores);
                 return ResponseEntity.ok().body("Plano editado com sucesso");
             } else {
                 return ResponseEntity.badRequest().body("Id não encontrado!");
