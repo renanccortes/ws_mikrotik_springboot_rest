@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import static br.com.trixsolucao.mkws.controller.util.ControllerUtil.validaHeaderConnection;
 
 @RestController
 @RequestMapping({"/open"})
@@ -26,15 +25,10 @@ public class OpenConnection {
 
     public ResponseEntity testarConexao(@RequestHeader Map<String, String> connectionHeader) {
         try {
-            validaHeaderConnection(connectionHeader);
-            System.out.println("Request -->>> " + connectionHeader);
             Mikrotik.getInstance().onConectar(connectionHeader.get("hostmk"), connectionHeader.get("portmk"), connectionHeader.get("usuariomk"), connectionHeader.get("senhamk"));
-
             return ResponseEntity.ok().build();
 
-        } catch (HeaderException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        } catch (MikrotikApiException ex) {
+        }  catch (MikrotikApiException ex) {
             return ResponseEntity.status(HttpStatus.GATEWAY_TIMEOUT).build();
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
