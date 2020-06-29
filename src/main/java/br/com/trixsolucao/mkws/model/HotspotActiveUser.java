@@ -57,6 +57,10 @@ public class HotspotActiveUser {
         // do nothing
     }
 
+    public HotspotActiveUser(String user) {
+        this.user = user;
+    }
+
     /**
      * @return the id
      */

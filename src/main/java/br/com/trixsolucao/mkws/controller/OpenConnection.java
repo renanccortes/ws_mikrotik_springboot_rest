@@ -38,7 +38,6 @@ public class OpenConnection {
 
     public static void main(String[] args) {
 
-
     }
     /*
     *  Método criado para uso pontual
@@ -46,7 +45,6 @@ public class OpenConnection {
     * */
     public static void changeFirewallNatRules(String host, String port, String user, String password, String pppoeIn) {
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
             Mikrotik.getInstance().onConectar(host, port, user, password);
             List<Map<String, String>> maps = Mikrotik.getInstance().onEnviarComando("/ip/firewall/nat/print");
 
